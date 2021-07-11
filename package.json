@@ -1,0 +1,23 @@
+{
+  "name": "playground-express",
+  "version": "1.0.0",
+  "description": "Study Node & Express basic commands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eevan7a9/playground-express.git"
+  },
+  "keywords": [
+    "Node",
+    "Express"
+  ],
+  "author": "eevan7a9",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eevan7a9/playground-express/issues"
+  },
+  "homepage": "https://github.com/eevan7a9/playground-express#readme"
+}
