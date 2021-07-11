@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Study Node & Express basic commands",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/eevan7a9/playground-express/issues"
   },
-  "homepage": "https://github.com/eevan7a9/playground-express#readme"
+  "homepage": "https://github.com/eevan7a9/playground-express#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
