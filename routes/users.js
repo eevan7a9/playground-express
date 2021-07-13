@@ -24,7 +24,7 @@ router.post("/", (req, res) => {
 // single user by id
 router.get("/:id", (req, res) => {
   console.log("Getting single user...");
-  const user = users.find((user) => user.id === parseInt(req.params.id));
+  const user = users.find((user) => user.id === req.params.id.toString());
   if (user) {
     res.send(user);
     return;
