@@ -13,9 +13,7 @@ router.post("/", (req, res) => {
   console.log("Adding new user");
   users.push(req.body);
   res.send({
-    ...{
-      message: "Success: New user added.",
-    },
+    message: "Success: New user added.",
     data: req.body,
   });
 });
