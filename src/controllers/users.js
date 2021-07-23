@@ -1,5 +1,7 @@
 import { dummyUsers } from "../dummy-data/users.js";
 import { v4 as uuidv4 } from "uuid";
+
+import { User } from "../models/users.js";
 let users = dummyUsers;
 
 export const getUsers = function (req, res) {
@@ -9,10 +11,10 @@ export const getUsers = function (req, res) {
 
 export const createUser = function (req, res) {
   console.log("Adding new user");
-  const user = {
-    id: uuidv4(),
-    ...req.body,
-  };
+  const { firstName, lastName, age } = req.body;
+  const user = new User({ firstName, lastName, age });
+  user.save();
+
   users.push(user);
   res.send({
     message: "Success: New user added.",
