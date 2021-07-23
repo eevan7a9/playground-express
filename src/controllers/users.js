@@ -10,15 +10,20 @@ export const getUsers = function (req, res) {
 };
 
 export const createUser = function (req, res) {
-  console.log("Adding new user");
+  console.log("Adding new user...");
+
   const { firstName, lastName, age } = req.body;
   const user = new User({ firstName, lastName, age });
-  user.save();
-
-  users.push(user);
-  res.send({
-    message: "Success: New user added.",
-    user,
+  const message = "Success: New user added.";
+  // saving to database
+  user.save((err, doc) => {
+    if (err) {
+      return console.log(err);
+    }
+    res.send({
+      message,
+      data: doc,
+    });
   });
 };
 
