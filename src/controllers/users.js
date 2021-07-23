@@ -73,11 +73,16 @@ export const updateUser = function (req, res) {
 
 export const deleteUser = function (req, res) {
   console.log("Deleting user...");
-  let message = "Error: user not found.";
-  const foundUser = users.find((user) => user.id == req.params.id);
-  if (foundUser) {
-    message = "Success: found user, is now deleted.";
-    users = users.filter((user) => user.id != foundUser.id);
-  }
-  res.send({ message, user: foundUser });
+  const _id = req.params.id;
+
+  User.findOneAndDelete({ _id }, (err, user) => {
+    if (err) {
+      res.send({ message: err.reason });
+      return;
+    }
+    res.send({
+      message: "Success: User is deleted.",
+      data: user,
+    });
+  });
 };
