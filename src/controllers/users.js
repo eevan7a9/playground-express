@@ -6,7 +6,18 @@ let users = dummyUsers;
 
 export const getUsers = function (req, res) {
   console.log("Getting all users...");
-  res.send({ users });
+  // find all users
+  User.find({}, (err, users) => {
+    if (err) {
+      console.log(err);
+      res.send({ message: `${err.reason}` });
+      return;
+    }
+    res.send({
+      message: "Success: Fetched all users.",
+      users,
+    });
+  });
 };
 
 export const createUser = function (req, res) {
@@ -18,7 +29,9 @@ export const createUser = function (req, res) {
   // saving to database
   user.save((err, doc) => {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      res.send({ message: `${err.reason}` });
+      return;
     }
     res.send({
       message,
@@ -29,14 +42,19 @@ export const createUser = function (req, res) {
 
 export const getUser = function (req, res) {
   console.log("Getting single user...");
-  let message = "Error: user not found.";
-  const user = users.find((user) => user.id === req.params.id.toString());
-  if (user) {
-    message = `Success: user ${user.firstName} is found.`;
-    res.send({ message, user });
-    return;
-  }
-  res.send({ message });
+  const _id = req.params.id;
+  // Finding by ID
+  User.findById({ _id }, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.send({ message: `${err.reason}` });
+      return;
+    }
+    res.send({
+      message: "Success: Fetch single user.",
+      data: user,
+    });
+  });
 };
 
 export const updateUser = function (req, res) {
