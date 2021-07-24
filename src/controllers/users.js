@@ -1,8 +1,4 @@
-import { dummyUsers } from "../dummy-data/users.js";
-import { v4 as uuidv4 } from "uuid";
-
 import { User } from "../models/users.js";
-let users = dummyUsers;
 
 export const getUsers = function (req, res) {
   console.log("Getting all users...");
@@ -59,16 +55,33 @@ export const getUser = function (req, res) {
 
 export const updateUser = function (req, res) {
   console.log("Updating new user...");
-  let message = "Error: user not found.";
-  let foundUser = users.find((user) => user.id == req.params.id);
+  const _id = req.params.id;
   const { firstName, lastName, age } = req.body;
-  if (foundUser) {
-    message = "found user";
-    firstName && (foundUser.firstName = firstName);
-    lastName && (foundUser.lastName = lastName);
-    age && (foundUser.age = age);
-  }
-  res.send({ message, user: foundUser });
+  console.log(firstName, lastName, age);
+
+  User.findByIdAndUpdate(
+    { _id }, // ID
+    {
+      $set: {
+        // Fields to update
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(age !== undefined && { age }),
+      },
+    },
+    { useFindAndModify: false, new: true }, // options
+    (err, user) => {
+      if (err) {
+        console.log(err);
+        res.send({ message: err.reason });
+        return;
+      }
+      res.send({
+        message: "Success: Updated single user",
+        data: user,
+      });
+    }
+  );
 };
 
 export const deleteUser = function (req, res) {
@@ -77,6 +90,7 @@ export const deleteUser = function (req, res) {
 
   User.findOneAndDelete({ _id }, (err, user) => {
     if (err) {
+      console.log(err);
       res.send({ message: err.reason });
       return;
     }
