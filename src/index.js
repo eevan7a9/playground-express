@@ -1,19 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
 import usersRoutes from "./routes/users.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
-const PORT = 5000;
+const PORT = process.env.SERVER_PORT;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   console.log("Accessing Root...");
   res.send("Hello, this is Root.");
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/playground-db", {
+  .connect(process.env.DB_CONNECT, {
+    useCreateIndex: true,
     useUnifiedTopology: true,
     useNewUrlParser: true,
   })
