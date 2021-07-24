@@ -1,6 +1,6 @@
 import { User } from "../models/users.js";
 
-export const getUsers = function (req, res) {
+export const getUsers = function (_, res) {
   console.log("Getting all users...");
   // find all users
   User.find({})
@@ -22,8 +22,8 @@ export const getUsers = function (req, res) {
 export const createUser = function (req, res) {
   console.log("Adding new user...");
 
-  const { firstName, lastName, age } = req.body;
-  const newUser = new User({ firstName, lastName, age });
+  const { firstName, lastName, age, email } = req.body;
+  const newUser = new User({ firstName, lastName, age, email });
   // saving to database
   newUser
     .save()
@@ -35,8 +35,8 @@ export const createUser = function (req, res) {
     })
     .catch((err) => {
       if (err) {
-        console.log(err);
-        res.status(400).send(err);
+        console.log(err, err.message);
+        res.status(400).send({ err, message: err.message });
         return;
       }
     });
@@ -81,7 +81,7 @@ export const updateUser = function (req, res) {
   User.findOneAndUpdate(
     { _id }, // ID
     { $set },
-    { useFindAndModify: false, new: true } // options
+    { useFindAndModify: false, new: true, runValidators: true } // options
   )
     .then((result) => {
       if (!result) {
