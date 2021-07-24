@@ -57,9 +57,8 @@ export const updateUser = function (req, res) {
   console.log("Updating new user...");
   const _id = req.params.id;
   const { firstName, lastName, age } = req.body;
-  console.log(firstName, lastName, age);
 
-  User.findByIdAndUpdate(
+  User.findOneAndUpdate(
     { _id }, // ID
     {
       $set: {
