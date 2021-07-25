@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { User } from "../models/users.js";
 
 export const getUsers = function (_, res) {
@@ -19,27 +20,34 @@ export const getUsers = function (_, res) {
     });
 };
 
-export const createUser = function (req, res) {
+export const createUser = async function (req, res) {
   console.log("Adding new user...");
 
-  const { firstName, lastName, age, email } = req.body;
-  const newUser = new User({ firstName, lastName, age, email });
-  // saving to database
-  newUser
-    .save()
-    .then((result) => {
-      res.status(201).send({
-        message: "Success: New user added.",
-        data: result,
-      });
-    })
-    .catch((err) => {
-      if (err) {
-        console.log(err, err.message);
-        res.status(400).send({ err, message: err.message });
-        return;
-      }
+  const { firstName, lastName, age, email, password } = req.body;
+  try {
+    // Hashing password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const newUser = new User({
+      firstName,
+      lastName,
+      age,
+      email,
+      password: hashedPassword,
     });
+    // saving to database
+    const user = await newUser.save();
+    res.status(201).send({
+      message: "Success: New user added.",
+      data: user,
+    });
+  } catch (err) {
+    if (err) {
+      console.log(err);
+      res.status(400).send({ err, message: err.message });
+      return;
+    }
+  }
 };
 
 export const getUser = function (req, res) {

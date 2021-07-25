@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
+      minlength: 4,
       required: true,
     },
     lastName: String,
@@ -13,6 +14,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       match: /.+\@.+\..+/,
       unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
   },
   {
