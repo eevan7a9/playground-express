@@ -26,13 +26,13 @@ export const createUser = async function (req, res) {
   const { firstName, lastName, age, email, password } = req.body;
   try {
     // Hashing password
-    const saltRounds = 10;
+    const saltRounds = parseInt(process.env.SALT_ROUNDS);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newUser = new User({
       firstName,
       lastName,
       age,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
     });
     // saving to database
@@ -79,12 +79,13 @@ export const getUser = function (req, res) {
 export const updateUser = function (req, res) {
   console.log("Updating new user...");
   const _id = req.params.id;
-  const { firstName, lastName, age } = req.body;
+  const { firstName, lastName, age, email } = req.body;
   const $set = {
     // Fields to update
     ...(firstName !== undefined && { firstName }),
     ...(lastName !== undefined && { lastName }),
     ...(age !== undefined && { age }),
+    ...(email !== undefined && { email: email.toLowerCase() }),
   };
   User.findOneAndUpdate(
     { _id }, // ID
@@ -136,4 +137,27 @@ export const deleteUser = function (req, res) {
         return;
       }
     });
+};
+
+export const signInUser = async function (req, res) {
+  console.log("Sign-in user...");
+
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      res.status(404).send({ message: "Error: User not found." });
+      return;
+    }
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass) {
+      res.status(401).send({ message: "Error: Invalid password." });
+      return;
+    }
+    res.send({ message: "You are logged-in" });
+    return;
+  } catch (err) {
+    res.status(400).send(err);
+    return;
+  }
 };
