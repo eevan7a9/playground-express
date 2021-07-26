@@ -1,4 +1,5 @@
 import express from "express";
+import { isAuthenticated } from "../middlewares/auth.js";
 import {
   getUsers,
   createUser,
@@ -17,7 +18,7 @@ router.post("/", createUser);
 // Get single user by id
 router.get("/:id", getUser);
 // Update single user by id
-router.patch("/:id", updateUser);
+router.patch("/:id", isAuthenticated, updateUser);
 // Delete single user by id
 router.delete("/:id", deleteUser);
 // Signin user
