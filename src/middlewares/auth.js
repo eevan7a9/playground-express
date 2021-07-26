@@ -9,7 +9,8 @@ export const isAuthenticated = async function (req, res, next) {
   const token = req.headers.authorization.split(" ")[1];
   try {
     console.log("Result: Authentication is a success.");
-    jwt.verify(token, process.env.SECRET_KEY);
+    const { id } = jwt.verify(token, process.env.SECRET_KEY);
+    res.locals.tokenId = id;
     next();
   } catch (err) {
     console.log("Result: Authentication is a failure.");

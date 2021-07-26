@@ -77,9 +77,14 @@ export const getUser = function (req, res) {
     });
 };
 
-export const updateUser = function (req, res) {
+export const updateUser = async function (req, res) {
   console.log("Updating new user...");
   const _id = req.params.id;
+  if (_id !== res.locals.tokenId) {
+    // We only allow owner to update
+    res.status(401).send({ message: "Error: not allowed." });
+    return;
+  }
   const { firstName, lastName, age, email } = req.body;
   const $set = {
     // Fields to update
@@ -88,30 +93,20 @@ export const updateUser = function (req, res) {
     ...(age !== undefined && { age }),
     ...(email !== undefined && { email: email.toLowerCase() }),
   };
-  User.findOneAndUpdate(
-    { _id }, // ID
-    { $set },
-    { useFindAndModify: false, new: true, runValidators: true } // options
-  )
-    .then((result) => {
-      if (!result) {
-        res.status(404).send({
-          message: "Error: User not found.",
-        });
-        return;
-      }
-      res.send({
-        message: "Success: Updated single user",
-        data: result,
-      });
-    })
-    .catch((err) => {
-      if (err) {
-        console.log(err);
-        res.status(422).send(err);
-        return;
-      }
-    });
+  try {
+    const options = { useFindAndModify: false, new: true, runValidators: true };
+    const result = await User.findOneAndUpdate({ _id }, { $set }, options);
+    if (!result) {
+      res.status(404).send({ message: "Error: User not found." });
+      return;
+    }
+    res.send({ message: "Success: Updated single user", data: result });
+  } catch (err) {
+    if (err) {
+      res.status(400).send(err);
+      return;
+    }
+  }
 };
 
 export const deleteUser = function (req, res) {
