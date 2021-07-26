@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { User } from "../models/users.js";
 
 export const getUsers = function (_, res) {
@@ -154,7 +155,8 @@ export const signInUser = async function (req, res) {
       res.status(401).send({ message: "Error: Invalid password." });
       return;
     }
-    res.send({ message: "You are logged-in" });
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+    res.send({ message: "Success: User is signed-in.", token });
     return;
   } catch (err) {
     res.status(400).send(err);
